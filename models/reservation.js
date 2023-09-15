@@ -41,9 +41,8 @@ class Reservation {
   }
 
 
-  /**
-   *  Save this reserveration
-   */
+  /** Save this reserveration. */
+
   async save() {
     if (this.id === undefined) {
       const result = await db.query(

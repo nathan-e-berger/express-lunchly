@@ -56,6 +56,25 @@ class Customer {
     return new Customer(customer);
   }
 
+  /** Search for a customer by name. Return an array of instances. */
+  //FIXME: name is NOT case-sensitive at the moment
+  // fuzzy searching %name%
+  static async search(name) {
+    const results = await db.query(
+      `SELECT id,
+                  first_name AS "firstName",
+                  last_name  AS "lastName",
+                  phone,
+                  notes
+            FROM customers
+            WHERE first_name = $1 OR last_name = $1
+            ORDER BY last_name, first_name`,
+            [name],
+    );
+
+    return results.rows.map(c => new Customer(c));
+  }
+
   /** get all reservations for this customer. */
 
   async getReservations() {
@@ -90,10 +109,9 @@ class Customer {
       );
     }
   }
-  /**
-   * Returns full name of customer
-   *
-   */
+
+  /** Returns full name of customer. */
+
   fullName() {
 
     return `${this.firstName} ${this.lastName}`;

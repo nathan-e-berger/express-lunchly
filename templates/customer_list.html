@@ -4,6 +4,21 @@
 
 <a class="btn btn-primary" style="float: right" href="/add/">Add a Customer</a>
 
+{% if searches %}
+<h1>Search Results</h1>
+<ul style="column-count: 4">
+  {% for search in searches %}
+  <li>
+    <a href="/{{ customer.id }}/">
+      {{ ??????????????????? }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+
+
 <h1>Customers</h1>
 
 <ul style="column-count: 4">

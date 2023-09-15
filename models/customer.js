@@ -58,34 +58,54 @@ class Customer {
   }
 
   /** Search for a customer by name. Return an array of instances. */
-  //FIXME: name is NOT case-sensitive at the moment
-  // fuzzy searching %name%
-  static async search(name) {
-    let firstName;
-    let lastName;
+  // FIXME: returns duplicates, example search "jessica abbott"
+  static async search(terms) {
+    const searches = new Set();
+    const names = terms.split(" ");
 
-    if (name.includes(" ")) {
-      name = name.split(" ");
-      firstName = name[0];
-      lastName = name[1];
+    for (const name of names) {
+      let results = await db.query(
+        `SELECT id,
+                    first_name AS "firstName",
+                    last_name  AS "lastName",
+                    phone,
+                    notes
+              FROM customers
+              WHERE first_name ILIKE $1 OR last_name ILIKE $1
+              ORDER BY last_name, first_name`,
+        [`%${name}%`],
+      );
+
+      results = results.rows.map(c => new Customer(c));
+
+      for (const result of results) {
+        searches.add(result);
+      }
     }
-    FullName = new Set();
-    const results = await db.query(
-      `SELECT id,
-                  first_name AS "firstName",
-                  last_name  AS "lastName",
-                  phone,
-                  notes
-            FROM customers
-            WHERE first_name ILIKE $1 OR last_name ILIKE $1
-            ORDER BY last_name, first_name`,
-      [`%${name}%`],
-    );
+    console.log("searches", searches);
+    return searches;
+  }
 
-    console.log("results as instances", results.rows.map(c => new Customer(c)));
+  /** Return top 10 customers with the most reservations.
+   * Returns an array of instances. */
+  static async best() {
+    let results = await db.query(
+      `SELECT id,
+            first_name AS "firstName",
+            last_name  AS "lastName",
+            phone,
+            notes
+          FROM customers
+          JOIN reservations
+            ON customers.id = reservations.customer_id
+          GROUP BY customers.id
+          ORDER BY COUNT(reservations.customer_id) DESC
+          LIMIT 10;`
+    );
 
     return results.rows.map(c => new Customer(c));
   }
+
 
   /** get all reservations for this customer. */
 

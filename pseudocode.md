@@ -11,3 +11,16 @@
         - first_name = $1 or last_name = $1
 - Edit existing route to include search data and pass into template
     - render html with search results
+
+
+## BEST CUSTOMERS
+
+- customers class method
+- top 10 customers ordered by most reservations
+
+
+1. class method
+
+2. make a route / view function
+
+3. add that data to the template

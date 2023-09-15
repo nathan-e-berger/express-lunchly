@@ -4,7 +4,6 @@
 
 const db = require("../db");
 const Reservation = require("./reservation");
-const capitalizeFirst = require("../utils");
 
 
 /** Customer of the restaurant. */
@@ -62,9 +61,15 @@ class Customer {
   //FIXME: name is NOT case-sensitive at the moment
   // fuzzy searching %name%
   static async search(name) {
-    // name.split(" ");
-    capitalName = capitalizeFirst(name);
+    let firstName;
+    let lastName;
 
+    if (name.includes(" ")) {
+      name = name.split(" ");
+      firstName = name[0];
+      lastName = name[1];
+    }
+    FullName = new Set();
     const results = await db.query(
       `SELECT id,
                   first_name AS "firstName",
@@ -72,9 +77,9 @@ class Customer {
                   phone,
                   notes
             FROM customers
-            WHERE first_name LIKE '%$1%' OR last_name LIKE '%$1%'
+            WHERE first_name ILIKE $1 OR last_name ILIKE $1
             ORDER BY last_name, first_name`,
-      [capitalName],
+      [`%${name}%`],
     );
 
     console.log("results as instances", results.rows.map(c => new Customer(c)));

@@ -15,13 +15,12 @@ const router = new express.Router();
 router.get("/", async function (req, res, next) {
   let searches;
 
-  console.log("req body",req.body)
-  console.log("req.body.search",req.body?.search)
+  console.log("req.query.search", req.query.search);
 
-  if (req.body !== undefined) {
-    searches = await Customer.search(req.body.search);
+  if (req.query !== undefined) {
+    searches = await Customer.search(req.query.search);
   }
-  console.log("searches in view function", searches)
+  console.log("searches in view function", searches);
   const customers = await Customer.all();
   return res.render("customer_list.html", { customers, searches });
 });

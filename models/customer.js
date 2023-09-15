@@ -90,11 +90,11 @@ class Customer {
    * Returns an array of instances. */
   static async best() {
     let results = await db.query(
-      `SELECT id,
+      `SELECT customers.id,
             first_name AS "firstName",
             last_name  AS "lastName",
             phone,
-            notes
+            customers.notes
           FROM customers
           JOIN reservations
             ON customers.id = reservations.customer_id

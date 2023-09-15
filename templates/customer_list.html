@@ -9,8 +9,8 @@
 <ul style="column-count: 4">
   {% for search in searches %}
   <li>
-    <a href="/{{ customer.id }}/">
-      {{ ??????????????????? }}
+    <a href="/{{ search.id }}/">
+      {{ search.fullName() }}
     </a>
   </li>
   {% endfor %}

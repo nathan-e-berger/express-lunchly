@@ -57,39 +57,28 @@ class Customer {
     return new Customer(customer);
   }
 
-  /** Search for a customer by name. Return an array of instances. */
-  // FIXME: returns duplicates, example search "jessica abbott"
-  static async search(terms) {
-    const searches = new Set();
-    const names = terms.split(" ");
-
-    for (const name of names) {
-      let results = await db.query(
-        `SELECT id,
+  /** Search for a customer by name. */
+  // TODO: variable names aren't specific enough
+  static async search(term) {
+    const results = await db.query(
+      `SELECT id,
                     first_name AS "firstName",
                     last_name  AS "lastName",
                     phone,
                     notes
               FROM customers
-              WHERE first_name ILIKE $1 OR last_name ILIKE $1
+              WHERE concat(first_name, ' ', last_name) ILIKE $1
               ORDER BY last_name, first_name`,
-        [`%${name}%`],
-      );
+      [`%${term}%`],
+    );
 
-      results = results.rows.map(c => new Customer(c));
-
-      for (const result of results) {
-        searches.add(result);
-      }
-    }
-    console.log("searches", searches);
-    return searches;
+    return results.rows.map(c => new Customer(c));
   }
 
-  /** Return top 10 customers with the most reservations.
-   * Returns an array of instances. */
+  /** Return top 10 customers with the most reservations. */
+
   static async best() {
-    let results = await db.query(
+    const results = await db.query(
       `SELECT customers.id,
             first_name AS "firstName",
             last_name  AS "lastName",

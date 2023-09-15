@@ -18,9 +18,15 @@ router.get("/", async function (req, res, next) {
   if (req.query.search !== undefined) {
     searches = await Customer.search(req.query.search);
   }
-  console.log("searches in view function", searches);
   const customers = await Customer.all();
   return res.render("customer_list.html", { customers, searches });
+});
+
+/** Renders list of Top 10 customers by reservation count */
+
+router.get("/top-ten", async function (req, res, next) {
+  const customers = await Customer.best();
+  return res.render("top_ten.html", { customers });
 });
 
 /** Form to add a new customer. */
